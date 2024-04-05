@@ -17,6 +17,7 @@ import java.util.UUID;
 @Table("transactions")
 public class TransactionEntity {
     @Id
+    @Column("id")
     private UUID uuid;
     @Column("transaction_type")
     private TransactionType transactionType;
@@ -28,6 +29,10 @@ public class TransactionEntity {
     private LocalDateTime updatedAt;
     @Column("card_id")
     private UUID cardId;
+    @Transient
+    private CardEntity card;
+    @Transient
+    private CustomerEntity customer;
     @Column
     private String language;
     @Column

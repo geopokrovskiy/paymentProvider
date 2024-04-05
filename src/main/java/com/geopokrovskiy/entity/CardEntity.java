@@ -17,6 +17,7 @@ import java.util.UUID;
 @Table("cards")
 public class CardEntity {
     @Id
+    @Column("id")
     private UUID uuid;
     @Column("customer_id")
     private UUID customerId;
@@ -25,7 +26,7 @@ public class CardEntity {
     @Column
     private String cvv;
     @Column("expiration_date")
-    private LocalDateTime expirationDate;
+    private String expirationDate;
     @Transient
     @ToString.Exclude
     private List<TransactionEntity> transactionList;

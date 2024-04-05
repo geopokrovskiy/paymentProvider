@@ -26,15 +26,17 @@ CREATE table if not exists cards
 (
     id              uuid primary key DEFAULT gen_random_uuid(),
     customer_id     UUID        NOT NULL,
-    card_number     VARCHAR(32) NOT NULL,
+    card_number     VARCHAR(32) UNIQUE NOT NULL,
     cvv             VARCHAR(8)  NOT NULL,
-    expiration_date TIMESTAMP        default current_timestamp
+    expiration_date VARCHAR(16) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS customers
 (
-    id       uuid primary key DEFAULT gen_random_uuid(),
-    username VARCHAR(64) NOT NULL
+    id         uuid primary key DEFAULT gen_random_uuid(),
+    first_name VARCHAR(64) NOT NULL,
+    last_name  VARCHAR(64) NOT NULL,
+    country    VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS transactions

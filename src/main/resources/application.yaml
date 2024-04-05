@@ -1,8 +1,6 @@
 server:
   port: 8083
 
-
-
 spring:
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/payment_provider
@@ -17,9 +15,6 @@ spring:
     locations: classpath:db/migration
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
-
-
-
 
 security:
   password:

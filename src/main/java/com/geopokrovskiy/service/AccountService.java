@@ -5,7 +5,10 @@ import com.geopokrovskiy.repository.AccountRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -22,10 +25,26 @@ public class AccountService {
                         AccountEntity accountToSave = new AccountEntity();
                         accountToSave.setMerchantId(m.getUuid());
                         accountToSave.setCurrencyCode(currencyCode);
-                        accountToSave.setBalance(0L);
+                        accountToSave.setBalance(0.0);
                         return this.accountRepository.save(accountToSave);
                     });
                 }).doOnSuccess(a -> log.info("A new account of {} has been created!", merchantUsername))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Currency " + currencyCode + " is unknown")));
+    }
+
+    public Flux<AccountEntity> getAccountList(String merchantUsername) {
+        return this.merchantService.getMerchantByUsername(merchantUsername).flatMapMany(m -> {
+            return this.accountRepository.findByMerchantId(m.getUuid());
+        });
+    }
+
+    public Mono<AccountEntity> getAccountByUUID(UUID uuid) {
+        return this.accountRepository.findByUuid(uuid);
+    }
+
+    public Mono<AccountEntity> updateAccountBalance(AccountEntity account, Double amount) {
+        return this.accountRepository.save(account.toBuilder()
+                .balance(account.getBalance() - amount)
+                .build());
     }
 }

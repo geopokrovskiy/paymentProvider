@@ -16,10 +16,7 @@ import java.util.UUID;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CardDto {
-    private UUID uuid;
-    private UUID customerId;
     private String cardNumber;
     private String cvv;
-    private LocalDateTime expirationDate;
-    private List<TransactionEntity> transactionList;
+    private String expirationDate;
 }

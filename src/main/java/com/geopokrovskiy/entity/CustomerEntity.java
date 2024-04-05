@@ -13,11 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@Table("customer")
+@Table("customers")
 public class CustomerEntity {
+    @Id
+    @Column("id")
     private UUID uuid;
+    @Column("first_name")
+    private String firstName;
+    @Column("last_name")
+    private String lastName;
     @Column
-    private String username;
+    private String country;
     @Transient
     @ToString.Exclude
     private List<CardEntity> cardList;

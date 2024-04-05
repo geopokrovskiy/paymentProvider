@@ -12,6 +12,7 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CustomerDto {
     private UUID uuid;
-    private String username;
-    private List<CardEntity> cardList;
+    private String firstName;
+    private String lastName;
+    private String country;
 }

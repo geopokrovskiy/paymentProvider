@@ -23,7 +23,7 @@ public class AccountEntity {
     @Column("merchant_id")
     private UUID merchantId;
     @Column
-    private Long balance;
+    private Double balance;
     @Transient
     @ToString.Exclude
     private List<TransactionEntity> transactionList;

@@ -12,8 +12,7 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AccountDto {
     private UUID uuid;
-    private UUID currencyId;
+    private String currencyCode;
     private UUID merchantId;
     private Long balance;
-    private List<TransactionEntity> transactionList;
 }

@@ -19,5 +19,4 @@ public class MerchantDto {
     private String password;
     private LocalDateTime registrationDate;
     private String country;
-    private List<AccountEntity> accountList;
 }
