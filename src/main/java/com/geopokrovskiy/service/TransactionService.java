@@ -4,13 +4,14 @@ import com.geopokrovskiy.entity.CardEntity;
 import com.geopokrovskiy.entity.TransactionEntity;
 import com.geopokrovskiy.entity.TransactionStatus;
 import com.geopokrovskiy.entity.TransactionType;
+import com.geopokrovskiy.exception.ApiException;
+import com.geopokrovskiy.exception.ErrorCodes;
 import com.geopokrovskiy.repository.TransactionRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,18 +26,23 @@ public class TransactionService {
     private final CardService cardService;
 
     public Mono<TransactionEntity> topUp(TransactionEntity transactionEntity) {
-        LocalDate expirationDate = cardService.getCardExpirationDate(transactionEntity.getCard().getExpirationDate());
-        return this.customerService.addNewCustomer(transactionEntity.getCustomer()).flatMap(customer -> {
-
-            return this.cardService.addNewCard(transactionEntity.getCard()
-                    .toBuilder()
-                    .customerId(customer.getUuid())
-                    .build()).flatMap(card -> {
-                return expirationDate.isBefore(LocalDate.now())
-                        ? this.saveTopUp(transactionEntity, TransactionStatus.FAILED, card)
-                        : this.saveTopUp(transactionEntity, TransactionStatus.IN_PROGRESS, card);
-            });
-        });
+        CardEntity cardEntity = transactionEntity.getCard();
+        return this.cardService.verifyCard(cardEntity.getExpirationDate(), cardEntity.getCardNumber()).flatMap(
+                b -> {
+                    if (b) {
+                        return this.customerService.addNewCustomer(transactionEntity.getCustomer()).flatMap(customer -> {
+                            return this.cardService.addNewCard(transactionEntity.getCard()
+                                    .toBuilder().
+                                    customerId(customer.getId())
+                                    .build()).flatMap(card -> {
+                                return this.saveTopUp(transactionEntity, TransactionStatus.IN_PROGRESS, card);
+                            });
+                        });
+                    } else {
+                        return Mono.error(new ApiException("Invalid card", ErrorCodes.INVALID_CARD));
+                    }
+                }
+        );
     }
 
     public Mono<TransactionEntity> payOut(TransactionEntity transactionEntity) {
@@ -54,7 +60,7 @@ public class TransactionService {
                             .updatedAt(LocalDateTime.now())
                             .transactionStatus(TransactionStatus.IN_PROGRESS)
                             .notificationURL(transactionEntity.getNotificationURL())
-                            .cardId(card.getUuid())
+                            .cardId(card.getId())
                             .transactionType(TransactionType.WITHDRAWAL)
                             .language(transactionEntity.getLanguage())
                             .build());
@@ -69,7 +75,7 @@ public class TransactionService {
                 .updatedAt(LocalDateTime.now())
                 .transactionStatus(status)
                 .notificationURL(transactionEntity.getNotificationURL())
-                .cardId(cardEntity.getUuid())
+                .cardId(cardEntity.getId())
                 .transactionType(TransactionType.TOP_UP)
                 .language(transactionEntity.getLanguage())
                 .build());

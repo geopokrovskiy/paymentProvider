@@ -3,6 +3,7 @@ package com.geopokrovskiy.entity;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -15,10 +16,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Table("transactions")
-public class TransactionEntity {
+public class TransactionEntity implements Persistable<UUID> {
     @Id
     @Column("id")
-    private UUID uuid;
+    private UUID id;
     @Column("transaction_type")
     private TransactionType transactionType;
     @Column("account_id")
@@ -45,4 +46,8 @@ public class TransactionEntity {
     @ToString.Exclude
     private List<CallbackEntity> callbackList;
 
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
 }

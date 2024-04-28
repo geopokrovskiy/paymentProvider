@@ -42,6 +42,12 @@ dependencies {
 	testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
+	// https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
+	testImplementation "org.testcontainers:junit-jupiter:$testContainersPostgresVersion"
+	testImplementation "org.testcontainers:r2dbc:$testContainersR2DBC"
+
+
+
 
 	//MAPSTRUCT
 	implementation "org.mapstruct:mapstruct:$mapStructVersion"
@@ -49,6 +55,6 @@ dependencies {
 
 }
 
-tasks.named('test') {
+test{
 	useJUnitPlatform()
 }

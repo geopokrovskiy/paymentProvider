@@ -14,6 +14,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     public Mono<CustomerEntity> addNewCustomer(CustomerEntity customer) {
-        return this.customerRepository.save(customer);
+        return this.customerRepository.findByUserName(customer.getUserName())
+                .switchIfEmpty(this.customerRepository.save(customer));
     }
 }

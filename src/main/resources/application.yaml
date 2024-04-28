@@ -28,7 +28,16 @@ security:
 
 logging:
   level:
-    org.springframework.web: ERROR
+    org.springframework.web: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  r2dbc:
+    url: r2dbc:tc:postgresql:///integration_test_db?TC_IMAGE_TAG=14-alpine
+
 
 
 

@@ -13,21 +13,35 @@ import java.time.LocalDate;
 @Data
 @Slf4j
 public class CardService {
+    private final String CARD_REGEX = "\\d{16,20}";
     private final CardRepository cardRepository;
 
     public Mono<CardEntity> addNewCard(CardEntity card) {
-        return this.cardRepository.save(card);
+        return this.cardRepository.findByCardNumber(card.getCardNumber())
+                .switchIfEmpty(this.cardRepository.save(card));
     }
 
     public Mono<CardEntity> getCardByNumber(String cardNumber) {
         return this.cardRepository.findByCardNumber(cardNumber);
     }
 
-    public LocalDate getCardExpirationDate(String expirationDate) {
+    public Mono<Boolean> verifyCard(String expirationDate, String cardNumber) {
+        return Mono.just(this.verifyCardRegex(cardNumber) && this.verifyCardExpirationDate(expirationDate));
+    }
+
+    private LocalDate getCardExpirationDate(String expirationDate) {
         String[] monthAndYear = expirationDate.split("/");
         int month = Integer.parseInt(monthAndYear[0]);
         int year = Integer.parseInt(monthAndYear[1]) + 2000;
 
         return LocalDate.of(year, month, 1).plusMonths(1);
+    }
+
+    private boolean verifyCardExpirationDate(String expirationDate) {
+        return this.getCardExpirationDate(expirationDate).isAfter(LocalDate.now());
+    }
+
+    private boolean verifyCardRegex(String cardNumber) {
+        return cardNumber.matches(CARD_REGEX);
     }
 }

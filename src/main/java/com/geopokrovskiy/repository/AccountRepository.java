@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface AccountRepository extends R2dbcRepository<AccountEntity, UUID> {
     Flux<AccountEntity> findByMerchantId(UUID merchantId);
 
-    Mono<AccountEntity> findByUuid(UUID uuid);
+    Mono<AccountEntity> findById(UUID uuid);
 }
