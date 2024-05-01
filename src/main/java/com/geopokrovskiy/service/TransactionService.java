@@ -64,7 +64,7 @@ public class TransactionService {
                             .transactionType(TransactionType.WITHDRAWAL)
                             .language(transactionEntity.getLanguage())
                             .build());
-                });
+                }).switchIfEmpty(Mono.error(new ApiException("Unknown card", ErrorCodes.UNKNOWN_CARD)));
     }
 
     private Mono<TransactionEntity> saveTopUp(TransactionEntity transactionEntity, TransactionStatus status, CardEntity cardEntity) {

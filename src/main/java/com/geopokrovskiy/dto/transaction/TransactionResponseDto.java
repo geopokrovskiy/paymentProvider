@@ -11,16 +11,16 @@ import java.util.UUID;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TransactionResponseDto {
-    private UUID uuid;
+    private UUID id;
     private TransactionStatus transactionStatus;
 
     @JsonProperty("transaction_id")
     public UUID getUuid() {
-        return uuid;
+        return id;
     }
 
     @JsonProperty("uuid")
     public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+        this.id = uuid;
     }
 }

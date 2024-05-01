@@ -1,26 +1,17 @@
 package com.geopokrovskiy.configuration;
 
 
-import io.r2dbc.spi.ConnectionFactory;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.r2dbc.connection.init.CompositeDatabasePopulator;
-import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
-import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
+import org.testcontainers.containers.PostgreSQLContainer;
 
-@Configuration
+@TestConfiguration(proxyBeanMethods = false)
 public class TestDatabaseConfiguration {
 
     @Bean
-    public ConnectionFactoryInitializer initializer(ConnectionFactory connectionFactory) {
-        ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
-        initializer.setConnectionFactory(connectionFactory);
-
-        CompositeDatabasePopulator populator = new CompositeDatabasePopulator();
-        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("db_init.sql")));
-        initializer.setDatabasePopulator(populator);
-
-        return initializer;
+    @ServiceConnection
+    public PostgreSQLContainer<?> postgreSQLContainer() {
+        return new PostgreSQLContainer<>("postgres:latest");
     }
 }

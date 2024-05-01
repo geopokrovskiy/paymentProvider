@@ -45,6 +45,9 @@ public class AccountService {
     }
 
     public Mono<AccountEntity> updateAccountBalance(AccountEntity account, Double amount) {
+        if (account.getBalance() < amount) {
+            return Mono.error(new ApiException("Insufficient funds", ErrorCodes.INSUFFICIENT_FUNDS));
+        }
         return this.accountRepository.save(account.toBuilder()
                 .balance(account.getBalance() - amount)
                 .build());

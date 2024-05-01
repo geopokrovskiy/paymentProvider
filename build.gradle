@@ -40,10 +40,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-
-	// https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
-	testImplementation "org.testcontainers:junit-jupiter:$testContainersPostgresVersion"
+	testImplementation "org.testcontainers:postgresql:$testContainersPostgresVersion"
 	testImplementation "org.testcontainers:r2dbc:$testContainersR2DBC"
 
 
