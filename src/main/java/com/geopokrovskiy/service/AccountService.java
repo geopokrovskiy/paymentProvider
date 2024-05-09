@@ -44,12 +44,18 @@ public class AccountService {
         return this.accountRepository.findById(id);
     }
 
-    public Mono<AccountEntity> updateAccountBalance(AccountEntity account, Double amount) {
+    public Mono<AccountEntity> withdrawMoneyFromAccount(AccountEntity account, Double amount) {
         if (account.getBalance() < amount) {
             return Mono.error(new ApiException("Insufficient funds", ErrorCodes.INSUFFICIENT_FUNDS));
         }
         return this.accountRepository.save(account.toBuilder()
                 .balance(account.getBalance() - amount)
+                .build());
+    }
+
+    public Mono<AccountEntity> topUpAccount(AccountEntity account, Double amount) {
+        return this.accountRepository.save(account.toBuilder()
+                .balance(account.getBalance() + amount)
                 .build());
     }
 }

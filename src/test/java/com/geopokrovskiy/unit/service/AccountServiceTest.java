@@ -75,7 +75,7 @@ public class AccountServiceTest {
 
         Double amount = 500d;
 
-        Mono<AccountEntity> resultMono = accountService.updateAccountBalance(account, amount);
+        Mono<AccountEntity> resultMono = accountService.withdrawMoneyFromAccount(account, amount);
 
         resultMono.subscribe(
                 result -> {
