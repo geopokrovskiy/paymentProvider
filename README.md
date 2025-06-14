@@ -12,6 +12,6 @@ The service includes:
 
 API Examples
 - POST /api/v1/merhants/register/
-- GET /api/v1/payments/accounts/get_account_list/
+- GET /api/v1/accounts/get_account_list/
 - POST /api/v1/payments/top_up/
 - POST /api/v1/payments/pay_out/
