@@ -7,3 +7,11 @@ The service includes:
 - Daily & range-based transaction history
 - Transaction detail endpoints
 - Webhooks are triggered on every transaction state change
+
+
+
+API Examples
+- POST /api/v1/merhants/register/
+- GET /api/v1/payments/accounts/get_account_list/
+- POST /api/v1/payments/top_up/
+- POST /api/v1/payments/pay_out/
