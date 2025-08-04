@@ -4,7 +4,6 @@ import com.geopokrovskiy.configuration.TestDatabaseConfiguration;
 import com.geopokrovskiy.dto.AccountDto;
 import com.geopokrovskiy.exception.ErrorCodes;
 import com.geopokrovskiy.it.utils.ControllerITUtils;
-import com.geopokrovskiy.mapper.merchant.MerchantMapper;
 import com.geopokrovskiy.repository.AccountRepository;
 import com.geopokrovskiy.repository.MerchantRepository;
 import org.junit.jupiter.api.BeforeEach;

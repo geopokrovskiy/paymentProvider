@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class TransactionServiceTest {
     private final MerchantRepository merchantRepository = Mockito.mock(MerchantRepository.class);
     private final CurrencyRepository currencyRepository = Mockito.mock(CurrencyRepository.class);
     private final PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
+    private final TransactionalOperator transactionalOperator = Mockito.mock(TransactionalOperator.class);
     private MerchantEntity merchantEntity;
     private AccountEntity accountEntity;
     private CustomerEntity customerEntity;
@@ -47,7 +49,7 @@ public class TransactionServiceTest {
         CurrencyService currencyService = new CurrencyService(currencyRepository);
         MerchantService merchantService = new MerchantService(merchantRepository, passwordEncoder);
         AccountService accountService = new AccountService(accountRepository, merchantService, currencyService);
-        transactionService = new TransactionService(transactionRepository, accountService, merchantService, customerService, cardService);
+        transactionService = new TransactionService(transactionRepository, accountService, merchantService, customerService, cardService, transactionalOperator);
     }
 
     @Test
@@ -174,7 +176,7 @@ public class TransactionServiceTest {
                     .country("Country1")
                     .firstName("fn1")
                     .lastName("ln1")
-                    .userName(CUSTOMER_USERNAME)
+                    .username(CUSTOMER_USERNAME)
                     .id(UUID.randomUUID())
                     .build();
         }

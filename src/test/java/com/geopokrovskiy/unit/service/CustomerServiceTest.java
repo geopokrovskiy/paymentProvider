@@ -25,14 +25,14 @@ public class CustomerServiceTest {
         CustomerEntity expectedCustomer = this.getExpectedCustomer();
         CustomerEntity newCustomer = this.getCustomerWithoutId();
 
-        Mockito.when(customerRepository.findByUserName(USERNAME)).thenReturn(Mono.just(expectedCustomer));
+        Mockito.when(customerRepository.findByUsername(USERNAME)).thenReturn(Mono.just(expectedCustomer));
         Mockito.when(customerRepository.save(newCustomer)).thenReturn(Mono.just(expectedCustomer));
 
         Mono<CustomerEntity> result = this.customerService.addNewCustomer(newCustomer);
 
         result.subscribe(
                 res -> {
-                    verify(customerRepository, times(1)).findByUserName(USERNAME);
+                    verify(customerRepository, times(1)).findByUsername(USERNAME);
                     verify(customerRepository, times(0)).save(any());
                 }
         );
@@ -43,7 +43,7 @@ public class CustomerServiceTest {
                 .country("Country1")
                 .firstName("fn1")
                 .lastName("ln1")
-                .userName(USERNAME)
+                .username(USERNAME)
                 .id(UUID.randomUUID())
                 .build();
     }
@@ -53,7 +53,7 @@ public class CustomerServiceTest {
                 .country("Country1")
                 .firstName("fn1")
                 .lastName("ln1")
-                .userName(USERNAME)
+                .username(USERNAME)
                 .build();
     }
 

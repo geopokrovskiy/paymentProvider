@@ -37,7 +37,7 @@ public class ControllerITUtils {
         JSONObject customer = new JSONObject();
         customer.put("first_name", "Ivan");
         customer.put("last_name", "Ivanov");
-        customer.put("user_name", "customer1");
+        customer.put("username", "customer1");
         customer.put("country", "Country1");
         return customer;
     }

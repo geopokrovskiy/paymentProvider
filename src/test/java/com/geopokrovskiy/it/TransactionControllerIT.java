@@ -100,7 +100,7 @@ public class TransactionControllerIT {
 
                     UUID id = transaction.getId();
                     assertNotNull(id);
-                    assertEquals(TransactionStatus.IN_PROGRESS, transaction.getTransactionStatus());
+                    assertEquals("IN_PROGRESS", transaction.getTransactionStatus());
                 });
     }
 
@@ -163,7 +163,7 @@ public class TransactionControllerIT {
 
         this.accountRepository.save(updatedAccount).block();
         this.customerRepository.save(customerMapper.map(ControllerITUtils.getCustomerDto())).block();
-        UUID customerId = customerRepository.findByUserName("customer1").block().getId();
+        UUID customerId = customerRepository.findByUsername("customer1").block().getId();
 
         CardEntity newCard = cardMapper.map(ControllerITUtils.getValidCardDto());
         newCard.setCustomerId(customerId);
@@ -186,7 +186,7 @@ public class TransactionControllerIT {
 
                     UUID id = transaction.getId();
                     assertNotNull(id);
-                    assertEquals(TransactionStatus.IN_PROGRESS, transaction.getTransactionStatus());
+                    assertEquals("IN_PROGRESS", transaction.getTransactionStatus());
                 });
     }
 
@@ -204,7 +204,7 @@ public class TransactionControllerIT {
 
         this.accountRepository.save(updatedAccount).block();
         this.customerRepository.save(customerMapper.map(ControllerITUtils.getCustomerDto())).block();
-        UUID customerId = customerRepository.findByUserName("customer1").block().getId();
+        UUID customerId = customerRepository.findByUsername("customer1").block().getId();
 
         CardEntity newCard = cardMapper.map(ControllerITUtils.getValidCardDto());
         newCard.setCustomerId(customerId);
@@ -241,7 +241,7 @@ public class TransactionControllerIT {
 
         this.accountRepository.save(updatedAccount).block();
         this.customerRepository.save(customerMapper.map(ControllerITUtils.getCustomerDto())).block();
-        UUID customerId = customerRepository.findByUserName("customer1").block().getId();
+        UUID customerId = customerRepository.findByUsername("customer1").block().getId();
 
         TransactionDto transactionDto = ControllerITUtils.getValidPayOut(account.getId());
 
@@ -274,7 +274,7 @@ public class TransactionControllerIT {
 
         this.accountRepository.save(updatedAccount).block();
         this.customerRepository.save(customerMapper.map(ControllerITUtils.getCustomerDto())).block();
-        UUID customerId = customerRepository.findByUserName("customer1").block().getId();
+        UUID customerId = customerRepository.findByUsername("customer1").block().getId();
 
         TransactionDto transactionDto = ControllerITUtils.getValidPayOut(account.getId());
 
