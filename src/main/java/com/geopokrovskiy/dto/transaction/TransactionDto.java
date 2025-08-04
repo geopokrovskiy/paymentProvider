@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.geopokrovskiy.dto.CardDto;
 import com.geopokrovskiy.dto.CustomerDto;
-import com.geopokrovskiy.entity.TransactionStatus;
-import com.geopokrovskiy.entity.TransactionType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,7 +13,7 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TransactionDto {
     private UUID uuid;
-    private TransactionType transactionType;
+    private String transactionType;
     private UUID accountId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -24,5 +22,5 @@ public class TransactionDto {
     private String language;
     private Double amount;
     private String notificationURL;
-    private TransactionStatus transactionStatus;
+    private String transactionStatus;
 }

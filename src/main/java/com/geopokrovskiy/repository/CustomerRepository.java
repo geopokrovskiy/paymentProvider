@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 public interface CustomerRepository extends R2dbcRepository<CustomerEntity, UUID> {
-    Mono<CustomerEntity> findByUserName(String userName);
+    Mono<CustomerEntity> findByUsername(String username);
 }

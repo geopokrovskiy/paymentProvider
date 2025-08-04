@@ -9,7 +9,9 @@ import com.geopokrovskiy.exception.ErrorCodes;
 import com.geopokrovskiy.repository.TransactionRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,8 +27,10 @@ public class TransactionService {
     private final MerchantService merchantService;
     private final CustomerService customerService;
     private final CardService cardService;
+    @Autowired
+    private final TransactionalOperator transactionalOperator;
 
-    Mono<TransactionEntity> getTransactionById(UUID id){
+    Mono<TransactionEntity> getTransactionById(UUID id) {
         return this.transactionRepository.getTransactionEntityById(id);
     }
 
@@ -116,7 +120,7 @@ public class TransactionService {
                 return accountService.topUpAccount(account, transactionEntity.getAmount());
             }).flatMap(accountEntity -> {
                 return this.updateTransactionStatus(transactionEntity, transactionStatus);
-            });
+            }).as(transactionalOperator::transactional);
         } else if (transactionEntity.getTransactionType().equals(TransactionType.WITHDRAWAL) && transactionStatus.equals(TransactionStatus.FAILED)) {
             UUID accountId = transactionEntity.getAccountId();
             return accountService.getAccountByUUID(accountId).flatMap(account -> {
@@ -124,7 +128,7 @@ public class TransactionService {
                 return accountService.topUpAccount(account, transactionEntity.getAmount());
             }).flatMap(accountEntity -> {
                 return this.updateTransactionStatus(transactionEntity, transactionStatus);
-            });
+            }).as(transactionalOperator::transactional);
         } else {
             log.info("{} transaction {} has been completed with status {}", transactionEntity.getTransactionType(), transactionEntity.getId(), transactionStatus);
             return this.updateTransactionStatus(transactionEntity, transactionStatus);

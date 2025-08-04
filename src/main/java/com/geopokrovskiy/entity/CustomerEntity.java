@@ -1,13 +1,14 @@
 package com.geopokrovskiy.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -26,7 +27,8 @@ public class CustomerEntity implements Persistable<UUID> {
     @Column("country")
     private String country;
     @Column("username")
-    private String userName;
+    private String username;
+
     @Override
     public boolean isNew() {
         return id == null;
