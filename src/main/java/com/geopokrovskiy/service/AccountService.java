@@ -41,11 +41,13 @@ public class AccountService {
     }
 
     public Mono<AccountEntity> getAccountByUUID(UUID id) {
-        return this.accountRepository.findById(id);
+        return this.accountRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ApiException("Account " + id + " does not exist", ErrorCodes.UNKNOWN_ACCOUNT)));
     }
 
     public Mono<AccountEntity> withdrawMoneyFromAccount(AccountEntity account, Double amount) {
         if (account.getBalance() < amount) {
+            log.error("Failed to withdraw {} {} from account {} : Insufficient funds", amount, account.getCurrencyCode(), account.getId());
             return Mono.error(new ApiException("Insufficient funds", ErrorCodes.INSUFFICIENT_FUNDS));
         }
         return this.accountRepository.save(account.toBuilder()
