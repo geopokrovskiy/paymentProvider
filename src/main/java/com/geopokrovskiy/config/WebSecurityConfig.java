@@ -3,9 +3,9 @@ package com.geopokrovskiy.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Configuration
 @EnableReactiveMethodSecurity
+@Lazy
 public class WebSecurityConfig {
 
     private final String[] publicRoutes = {"/api/v1/merchants/**", "/api/v1/accounts/**", "/api/v1/payments/**"};

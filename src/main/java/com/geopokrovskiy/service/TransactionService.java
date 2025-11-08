@@ -36,27 +36,44 @@ public class TransactionService {
 
     public Mono<TransactionEntity> topUp(TransactionEntity transactionEntity) {
         CardEntity cardEntity = transactionEntity.getCard();
-        return this.cardService.verifyCard(cardEntity.getExpirationDate(), cardEntity.getCardNumber()).flatMap(
-                b -> {
-                    if (b) {
-                        return this.customerService.addNewCustomer(transactionEntity.getCustomer()).flatMap(customer -> {
-                            return this.cardService.addNewCard(transactionEntity.getCard()
-                                    .toBuilder().
-                                    customerId(customer.getId())
-                                    .build()).flatMap(card -> {
-                                return this.saveTopUp(transactionEntity, TransactionStatus.IN_PROGRESS, card);
-                            });
-                        });
-                    } else {
-                        return Mono.error(new ApiException("Invalid card", ErrorCodes.INVALID_CARD));
+        UUID accountId = transactionEntity.getAccountId();
+
+        if (accountId == null) {
+            return Mono.error(new ApiException("Account id is null", ErrorCodes.UNKNOWN_ACCOUNT));
+        }
+
+        return accountService.getAccountByUUID(accountId)
+                .flatMap(account -> {
+                    if (account == null) {
+                        return Mono.error(new ApiException("Account does not exist", ErrorCodes.UNKNOWN_ACCOUNT));
                     }
-                }
-        );
+
+                    return cardService.verifyCard(cardEntity.getExpirationDate(), cardEntity.getCardNumber())
+                            .flatMap(isValid -> {
+                                if (!isValid) {
+                                    return Mono.error(new ApiException("Invalid card", ErrorCodes.INVALID_CARD));
+                                }
+
+                                return customerService.addNewCustomer(transactionEntity.getCustomer())
+                                        .flatMap(customer ->
+                                                cardService.addNewCard(
+                                                        transactionEntity.getCard()
+                                                                .toBuilder()
+                                                                .customerId(customer.getId())
+                                                                .build()
+                                                ).flatMap(card ->
+                                                        saveTopUp(transactionEntity, TransactionStatus.IN_PROGRESS, card)
+                                                )
+                                        );
+                            });
+                });
     }
 
     public Mono<TransactionEntity> payOut(TransactionEntity transactionEntity) {
         UUID accountId = transactionEntity.getAccountId();
         return this.accountService.getAccountByUUID(accountId).flatMap(account -> {
+                    if (account == null)
+                        return Mono.error(new ApiException("Account does not exist", ErrorCodes.UNKNOWN_ACCOUNT));
                     return this.accountService.withdrawMoneyFromAccount(account, transactionEntity.getAmount());
                 }).flatMap(account -> {
                     return this.cardService.getCardByNumber(transactionEntity.getCard().getCardNumber());
@@ -78,7 +95,8 @@ public class TransactionService {
                 });
     }
 
-    private Mono<TransactionEntity> saveTopUp(TransactionEntity transactionEntity, TransactionStatus status, CardEntity cardEntity) {
+    private Mono<TransactionEntity> saveTopUp(TransactionEntity transactionEntity, TransactionStatus
+            status, CardEntity cardEntity) {
         return transactionRepository.save(transactionEntity.toBuilder()
                 .accountId(transactionEntity.getAccountId())
                 .amount(transactionEntity.getAmount())
@@ -106,15 +124,18 @@ public class TransactionService {
 
     public Flux<TransactionEntity> getAllProcessedTransactions() {
         return transactionRepository.findAll().filter(transactionEntity ->
-                !transactionEntity.getTransactionStatus().equals(TransactionStatus.IN_PROGRESS));
+                !transactionEntity.getTransactionStatus().equals(TransactionStatus.IN_PROGRESS) &&
+                !transactionEntity.getTransactionStatus().equals(TransactionStatus.FINALIZED));
     }
 
-    private Mono<TransactionEntity> updateTransactionStatus(TransactionEntity transactionEntity, TransactionStatus status) {
+    public Mono<TransactionEntity> updateTransactionStatus(TransactionEntity transactionEntity, TransactionStatus
+            status) {
         transactionEntity.setTransactionStatus(status);
         return transactionRepository.save(transactionEntity);
     }
 
-    public Mono<TransactionEntity> completeTransaction(TransactionEntity transactionEntity, TransactionStatus transactionStatus) {
+    public Mono<TransactionEntity> completeTransaction(TransactionEntity transactionEntity, TransactionStatus
+            transactionStatus) {
         if (transactionEntity.getTransactionType().equals(TransactionType.TOP_UP) && transactionStatus.equals(TransactionStatus.SUCCESS)) {
             UUID accountId = transactionEntity.getAccountId();
             return accountService.getAccountByUUID(accountId).flatMap(account -> {
